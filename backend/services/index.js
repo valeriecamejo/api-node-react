@@ -5,11 +5,8 @@ exports.getData = async (req, res) => {
     const url = "https://api.got.show/api/book/characters"
     const response = await fetch(url)
     const json = await response.json()
-    console.log("LLEGO")
     return json
   } catch(err) {
     console.log(`Error: ${err}`)
   }
 }
-
-//module.exports = getData

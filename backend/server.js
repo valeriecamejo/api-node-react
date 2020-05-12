@@ -1,47 +1,39 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const characters = require('./routes/character.route');
-const services = require('./services/index')
+const express = require("express");
+const mongoose = require("mongoose");
+const characters = require("./routes/character.route");
+const services = require("./services/index");
+const cors = require('cors')
 
-const bodyParser = require('body-parser')
-const port = process.env.PORT || 3000
-const app = express()
+const bodyParser = require("body-parser");
+const port = process.env.PORT || 8080;
+const app = express();
 
-const mongoDB = 'mongodb://127.0.0.1/api_got'
-const mongoConfig = { useNewUrlParser: true, useUnifiedTopology: true }
-mongoose.connect(mongoDB, mongoConfig)
-const db = mongoose.connection
+const mongoUrl = "mongodb://127.0.0.1/api_got";
+const mongoConfig = { useNewUrlParser: true, useUnifiedTopology: true };
+mongoose.connect(mongoUrl, mongoConfig);
+const db = mongoose.connection;
 
-app.use(bodyParser.json())
-
- // Route
-app.get('/', characters)
-
-const getData = async () => {
-  const data = await services.getData()
-  return data
-}
+app.use(bodyParser.json());
+app.use(cors({ origin:true }))
 
 const saveData = async () => {
   try {
-    const existCollection = await db.collection('characters').find()
-    console.log(existCollection);
-    /* if (existCollection == []) {
-      const data = await getData()
-      db.collection('characters').insertMany(data);
-    } */
+    const data = await services.getData();
+    const filterKeys = (object, ...keys) => keys.reduce((acc, key) => ({...acc, [key]: object[key] }), {})
+    const chars = data.map(char => filterKeys(char, 'name', 'gender', 'slug', 'pagerank', 'house', 'books', 'titles', 'image'))
+
+    db.collection("characters").insertMany(chars);
   } catch (e) {
-    console.log(`Error: ${e}`);
+    console.log(`Error al intentar almacenar la data en BD: ${e}`);
   }
-}
+};
 
-//saveData()
+saveData();
 
-app.listen(port, err => {
-  if (err) return console.log('Unable to start the server');
-  console.log('Server is up and running on port number ' + port);
+// Route
+app.use("/", characters);
+
+app.listen(port, (err) => {
+  if (err) return console.log("No se puede iniciar el servidor");
+  console.log(`Servidor corriendo en el puerto ${port}`);
 });
-
-
-
-
