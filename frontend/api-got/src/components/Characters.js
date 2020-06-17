@@ -19,7 +19,7 @@ class Character extends Component {
           align={"center"} >
           <thead>
             <tr>
-              <th>Imagen</th>
+              <th>Foto</th>
               <th>Nombre</th>
               <th>Sexo</th>
               <th>Slug</th>
