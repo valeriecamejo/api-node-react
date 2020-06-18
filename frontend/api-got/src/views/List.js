@@ -30,7 +30,7 @@ export class List extends Component {
     }
     return !this.state.loaded ? (
       <div>
-        <Title>Personajes de Juego de Tronos</Title>
+        <Title>Personajes de Game of Thrones</Title>
         <Character characters={characters} key={characters._id}/>
       </div>
     ) : (
